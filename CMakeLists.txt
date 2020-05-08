@@ -27,7 +27,7 @@ IF (WIN32)
     set(MIO0_DIR ${MIO0_DIR}.exe)
     set(AIFC_DECODE_DIR ${AIFC_DECODE_DIR}.exe)
     set(AIFC_DECODE_DIR ${TEXTCONV_DIR}.exe)
-    set(LINK_LIBRARIES SDL2main SDL2 glew32 opengl32 m glu32 setupapi dinput8 user32 gdi32 imm32 ole32 oleaut32 shell32 winmm version uuid)
+    set(LINK_LIBRARIES setupapi dinput8 user32 gdi32 imm32 ole32 oleaut32 shell32 winmm version uuid)
 
     set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
     set(BUILD_SHARED_LIBS OFF)
