@@ -5,6 +5,7 @@ project(game)
 file(GLOB SOURCES "*.c")
 
 file(GLOB HEADERS "*.h")
+list(FILTER SOURCES EXCLUDE REGEX ".*.inc.c$")
 
 list(REMOVE_ITEM SOURCES ${PROJECT_SOURCE_DIR}/main.c)
 
