@@ -1,3 +1,5 @@
+#ifndef WIN32
+
 #include "libultra_internal.h"
 #include "stdlib.h"
 
@@ -30,3 +32,4 @@ ldiv_t ldiv(long num, long denom) {
 }
 
 #endif
+#endif /* WIN32 */
