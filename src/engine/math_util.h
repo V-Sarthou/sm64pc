@@ -70,7 +70,9 @@ void vec3f_set_dist_and_angle(Vec3f from, Vec3f to, f32  dist, s16  pitch, s16  
 s32 approach_s32(s32 current, s32 target, s32 inc, s32 dec);
 f32 approach_f32(f32 current, f32 target, f32 inc, f32 dec);
 s16 atan2s(f32 a, f32 b);
+#ifndef WIN32
 f32 atan2f(f32 a, f32 b);
+#endif
 void spline_get_weights(Vec4f a, f32 b, UNUSED s32 c);
 void anim_spline_init(Vec4s *a);
 s32 anim_spline_poll(Vec3f a);

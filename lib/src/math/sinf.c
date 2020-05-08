@@ -1,3 +1,4 @@
+#ifndef WIN32
 
 // These unions are necessary to put the constants in .rodata rather than .data.
 // TODO: is it possible to remove them somehow?
@@ -109,3 +110,5 @@ float sinf(float x)
 
 	return zero.f;
 }
+
+#endif /* WIN32 */

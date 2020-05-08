@@ -1,3 +1,4 @@
+#ifndef WIN32
 
 // These unions are necessary to put the constants in .rodata rather than .data.
 // TODO: is it possible to remove them somehow?
@@ -95,3 +96,5 @@ float cosf(float x)
 }
 #endif // OSX_BUILD cannot use this
 
+
+#endif /* WIN32 */

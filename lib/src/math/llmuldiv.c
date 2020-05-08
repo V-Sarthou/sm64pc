@@ -1,7 +1,10 @@
+#ifndef WIN32
 unsigned long long __ull_rshift(unsigned long long a0, unsigned long long a1)
 {
     return a0 >> a1;
 }
+#endif
+
 unsigned long long __ull_rem(unsigned long long a0, unsigned long long a1)
 {
     return a0 % a1;
@@ -11,10 +14,12 @@ unsigned long long __ull_div(unsigned long long a0, unsigned long long a1)
     return a0 / a1;
 }
 
+#ifndef WIN32
 unsigned long long __ll_lshift(unsigned long long a0, unsigned long long a1)
 {
     return a0 << a1;
 }
+#endif
 
 long long __ll_rem(unsigned long long a0, long long a1)
 {
@@ -47,7 +52,9 @@ long long __ll_mod(long long a0, long long a1)
     return tmp;
 }
  
+#ifndef WIN32
 long long __ll_rshift(long long a0, long long a1)
 {
     return a0 >> a1;
 }
+#endif

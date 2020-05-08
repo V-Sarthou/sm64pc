@@ -1,3 +1,5 @@
+#ifndef WIN32
+
 #include "libultra_internal.h"
 #include <stdlib.h>
 
@@ -28,3 +30,5 @@ ldiv_t ldiv(long num, long denom) {
 
     return ret;
 }
+
+#endif /* WIN32 */
