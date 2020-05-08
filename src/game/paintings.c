@@ -1,3 +1,7 @@
+#ifdef WIN32
+#define _USE_MATH_DEFINES
+#endif
+
 #include <ultra64.h>
 
 #include "sm64.h"
