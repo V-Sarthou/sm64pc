@@ -15,3 +15,6 @@ add_library(${PROJECT_NAME} STATIC ${SOURCES} ${HEADERS})
 
 target_link_libraries(${PROJECT_NAME} engine)
 
+IF (NOT WIN32)
+  target_link_libraries(${PROJECT_NAME} m)
+ENDIF()
