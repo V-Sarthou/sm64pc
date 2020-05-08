@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #ifndef _LANGUAGE_C
 #define _LANGUAGE_C
