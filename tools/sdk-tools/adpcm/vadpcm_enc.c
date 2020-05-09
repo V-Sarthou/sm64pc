@@ -2,8 +2,43 @@
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <getopt.h>
 #include "vadpcm.h"
+
+#ifdef WIN32
+/* From https://raw.githubusercontent.com/iotivity/iotivity/master/resource/c_common/windows/src/getopt.c */
+
+char* optarg = NULL;
+int optind = 1;
+
+int getopt( int argc, char* const argv[], const char* optstring )
+{
+  if ( (optind >= argc) || (argv[optind][0] != '-') || (argv[optind][0] == 0) )
+  {
+    return -1;
+  }
+
+  int opt = argv[optind][1];
+  const char* p = strchr( optstring, opt );
+
+  if ( p == NULL )
+  {
+    return '?';
+  }
+  if ( p[1] == ':' )
+  {
+    optind++;
+    if ( optind >= argc )
+    {
+      return '?';
+    }
+    optarg = argv[optind];
+    optind++;
+  }
+  return opt;
+}
+#else
+#include <getopt.h>
+#endif
 
 static char usage[] = "[-t -l min_loop_length] -c codebook aifcfile compressedfile";
 
@@ -72,7 +107,7 @@ int main(int argc, char **argv)
         switch (c)
         {
         case 'c':
-            if (sscanf(optarg, "%s", filename) == 1)
+            if (sscanf(optarg, "%[^\t\n]", filename) == 1)
             {
                 if ((fhandle = fopen(filename, "r")) == NULL)
                 {

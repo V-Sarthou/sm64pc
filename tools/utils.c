@@ -1,4 +1,6 @@
+#ifndef WIN32
 #include <dirent.h>
+#endif
 #include <fcntl.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -222,6 +224,7 @@ long copy_file(const char *src_name, const char *dst_name)
    return bytes_read;
 }
 
+#ifndef WIN32
 void dir_list_ext(const char *dir, const char *extension, dir_list *list)
 {
    char *pool;
@@ -252,6 +255,7 @@ void dir_list_ext(const char *dir, const char *extension, dir_list *list)
 
    closedir(dfd);
 }
+#endif
 
 void dir_list_free(dir_list *list)
 {

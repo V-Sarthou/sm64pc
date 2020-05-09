@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.12)
 
 project(libultra)
 
+#$(BUILD_DIR)/lib/bin/ipl3_font.bin: lib/ipl3_font.png
+#$(IPLFONTUTIL) e $< $@
+
 file(GLOB_RECURSE SOURCES "*.c")
 
 file(GLOB_RECURSE HEADERS "*.h")

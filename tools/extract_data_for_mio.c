@@ -17,6 +17,14 @@
 
 #define ELF_ST_TYPE(x) (((unsigned int) x) & 0xf)
 
+#ifdef WIN32
+#define BSWAP16(x) x = _byteswap_ushort(x)
+#define BSWAP32(x) x = _byteswap_ulong(x)
+#else
+#define BSWAP16(x) x = __builtin_bswap16(x)
+#define BSWAP32(x) x = __builtin_bswap32(x)
+#endif
+
 typedef uint32_t Elf32_Addr;
 typedef uint32_t Elf32_Off;
 
@@ -134,7 +142,7 @@ typedef enum {
 
 uint32_t u32be(uint32_t val) {
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-    return __builtin_bswap32(val);
+    return BSWAP32(val);
 #else
     return val;
 #endif
@@ -142,7 +150,7 @@ uint32_t u32be(uint32_t val) {
 
 uint16_t u16be(uint16_t val) {
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-    return __builtin_bswap16(val);
+    return BSWAP16(val);
 #else
     return val;
 #endif    
