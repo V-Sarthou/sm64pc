@@ -3,7 +3,9 @@
  * by executing tabledesign.
  */
 #define _XOPEN_SOURCE 500
+#ifndef WIN32
 #include <unistd.h>
+#endif
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
@@ -15,11 +17,19 @@ typedef int s32;
 typedef unsigned char u8;
 typedef unsigned int u32;
 
+#ifdef WIN32
+#define BSWAP16(x) x = _byteswap_ushort(x)
+#define BSWAP32(x) x = _byteswap_ulong(x)
+
+#define NORETURN
+#define UNUSED
+#else
 #define BSWAP16(x) x = __builtin_bswap16(x)
 #define BSWAP32(x) x = __builtin_bswap32(x)
 
 #define NORETURN __attribute__((noreturn))
 #define UNUSED __attribute__((unused))
+#endif
 
 typedef struct
 {

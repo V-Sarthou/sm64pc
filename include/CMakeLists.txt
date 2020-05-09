@@ -13,15 +13,17 @@ add_custom_target(
 )
 
 add_custom_command(
-        OUTPUT ${PROJECT_BINARY_DIR}/text_strings.h
-        COMMAND ${TEXTCONV_DIR} charmap.txt ${PROJECT_SOURCE_DIR}/text_strings.h.in ${PROJECT_BINARY_DIR}/text_strings.h
+        OUTPUT ${CMAKE_BINARY_DIR}/include/text_strings.h
+        COMMAND textconv ${CMAKE_SOURCE_DIR}/charmap.txt ${CMAKE_SOURCE_DIR}/include/text_strings.h.in ${CMAKE_BINARY_DIR}/include/text_strings.h
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        DEPENDS ${CMAKE_SOURCE_DIR}/include/text_strings.h.in
         COMMENT "Generating text_strings.."
 )
 
 add_custom_command(
-        OUTPUT ${PROJECT_BINARY_DIR}/text_menu_strings.h
-        COMMAND ${TEXTCONV_DIR} charmap_menu.txt ${PROJECT_SOURCE_DIR}/text_menu_strings.h.in ${PROJECT_BINARY_DIR}/text_menu_strings.h
+        OUTPUT ${CMAKE_BINARY_DIR}/include/text_menu_strings.h
+        COMMAND textconv ${CMAKE_SOURCE_DIR}/charmap_menu.txt ${CMAKE_SOURCE_DIR}/include/text_menu_strings.h.in ${CMAKE_BINARY_DIR}/include/text_menu_strings.h
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        DEPENDS ${CMAKE_SOURCE_DIR}/include/text_menu_strings.h.in
         COMMENT "Generating text_menu_strings.."
 )

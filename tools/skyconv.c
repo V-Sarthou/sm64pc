@@ -13,6 +13,11 @@
 #include "n64graphics.h"
 #include "utils.h"
 
+#ifdef WIN32
+#define PATH_MAX 4096
+typedef long ssize_t;
+#endif
+
 typedef struct {
     rgba *px;
     bool useless;
@@ -426,9 +431,11 @@ void combine_cakeimg(const char *input, const char *output, bool eu) {
         for (int i = 0; i < H; i++) {
             for (int j = 0; j < W; j++) {
                 //Read the full tile
-                uint8_t buf[SMALLH * SMALLW * 2];
-                if (fread(buf, sizeof(buf), 1, file) != 1) goto fail;
+                const size_t buf_size = SMALLH * SMALLW * 2;
+                uint8_t* buf = (uint8_t*) malloc(buf_size);
+                if (fread(buf, buf_size, 1, file) != 1) goto fail;
                 rgba *tile = raw2rgba(buf, SMALLH, SMALLW, 16);
+                free(buf);
 
                 //Only write the unique parts of each tile
                 for (int y = 0; y < SMALLH - 1; y++) {
@@ -447,9 +454,11 @@ void combine_cakeimg(const char *input, const char *output, bool eu) {
         combined = malloc(SMALLH*H * SMALLW*W * sizeof(rgba));
         for (int i = 0; i < H; i++) {
             for (int j = 0; j < W; j++) {
-                uint8_t buf[SMALLH * SMALLW * 2];
-                if (fread(buf, sizeof(buf), 1, file) != 1) goto fail;
+                const size_t buf_size = SMALLH * SMALLW * 2;
+                uint8_t* buf = (uint8_t*) malloc(buf_size);
+                if (fread(buf, buf_size, 1, file) != 1) goto fail;
                 rgba *tile = raw2rgba(buf, SMALLH, SMALLW, 16);
+                free(buf);
                 for (int y = 0; y < SMALLH; y++) {
                     for (int x = 0; x < SMALLW; x++) {
                         combined[(i*SMALLH + y) * SMALLW*W + (j*SMALLW + x)] = tile[y*SMALLW + x];

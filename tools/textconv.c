@@ -365,8 +365,26 @@ static void convert_file(const char *infilename, const char *outfilename)
         if (*pos == 0)  // end of file
             goto eof;
 
+        #ifdef WIN32
+        // Skip preprocessor (but not define, if, else, endif)
+        if ( *pos == '#' && *(pos+1) != 'd' && *(pos+1) != 'e' && *(pos+1) != 'i' )
+        {
+          end = pos;
+          fwrite( start, end - start, 1, fout );
+          pos++;
+          // skip over next newline
+          while ( *pos != '\n' )
+          {
+            if ( *pos == 0 )
+              goto eof;
+            pos++;
+          }
+          pos++;
+          start = end = pos;
+        }
+        #endif
         // check for comment
-        if (*pos == '/')
+        else if (*pos == '/')
         {
             pos++;
             // skip over // comment

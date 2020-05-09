@@ -1,19 +1,26 @@
 cmake_minimum_required(VERSION 3.12)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNON_MATCHING -DAVOID_UB")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNON_MATCHING -DAVOID_UB")
 
 project(sm64pc)
 
-set(ROM_VERSION us)
-add_compile_definitions(VERSION_US)
+set(ROM_VERSION "us" CACHE STRING "Rom version")
+set_property(CACHE ROM_VERSION PROPERTY STRINGS us eu jp sh)
+option(ROM_VERSION "Rom version")
+
+add_subdirectory(tools)
+
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+if(NOT EXISTS ${CMAKE_SOURCE_DIR}/baserom.${ROM_VERSION}.z64)
+  message(FATAL_ERROR "Please provide ${CMAKE_SOURCE_DIR}/baserom.${ROM_VERSION}.z64")
+endif()
+
+set(SM_VERSION_CFLAGS "-DVERSION_US -DNON_MATCHING -DAVOID_UB")
+add_definitions(${SM_VERSION_CFLAGS})
 
 set(HEXDUMP_PATH "hexdump" CACHE FILEPATH "")
-set(N64GRAPHICS_DIR ${CMAKE_SOURCE_DIR}/tools/n64graphics)
-set(SKYCONV_DIR ${CMAKE_SOURCE_DIR}/tools/skyconv)
-set(MIO0_DIR ${CMAKE_SOURCE_DIR}/tools/mio0)
-set(AIFC_DECODE_DIR ${CMAKE_SOURCE_DIR}/tools/aifc_decode)
-set(TEXTCONV_DIR ${CMAKE_SOURCE_DIR}/tools/textconv)
 
 IF (WIN32)
     option(HEXDUMP_PATH "Path to hexdump executable")
@@ -21,23 +28,16 @@ IF (WIN32)
       message(FATAL_ERROR "Please provide the path to hexdump executable.")
     endif()
 
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
-    set(N64GRAPHICS_DIR ${N64GRAPHICS_DIR}.exe)
-    set(SKYCONV_DIR ${SKYCONV_DIR}.exe)
-    set(MIO0_DIR ${MIO0_DIR}.exe)
-    set(AIFC_DECODE_DIR ${AIFC_DECODE_DIR}.exe)
-    set(AIFC_DECODE_DIR ${TEXTCONV_DIR}.exe)
+    #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
     set(LINK_LIBRARIES setupapi dinput8 user32 gdi32 imm32 ole32 oleaut32 shell32 winmm version uuid)
 
     set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
     set(BUILD_SHARED_LIBS OFF)
-    set(CMAKE_EXE_LINKER_FLAGS "-static")
+    #set(CMAKE_EXE_LINKER_FLAGS "-static")
 ELSE ()
     set(LINK_LIBRARIES SDL2main SDL2 GL m)
 ENDIF ()
 
-
-set(N64_TOOLS ${N64GRAPHICS_DIR} ${SKYCONV_DIR} ${MIO0_DIR} ${AIFC_DECODE_DIR})
 
 include_directories(
         include
@@ -49,12 +49,12 @@ include_directories(
         ${CMAKE_BINARY_DIR}/include
 )
 
-set(SOURCES src/pc/pc_main.c)
-
-add_executable(${PROJECT_NAME} ${SOURCES})
-
 add_subdirectory(include)
 add_subdirectory(textures)
+add_subdirectory(bin)
+add_subdirectory(actors)
+add_subdirectory(levels)
+add_subdirectory(src/buffers)
 add_subdirectory(src/audio)
 add_subdirectory(src/engine)
 add_subdirectory(src/goddard)
@@ -63,4 +63,6 @@ add_subdirectory(src/menu)
 add_subdirectory(src/game)
 add_subdirectory(lib)
 
-target_link_libraries(${PROJECT_NAME} libultra game audio goddard pc menu ${LINK_LIBRARIES})
+set(SOURCES src/pc/pc_main.c)
+add_executable(${PROJECT_NAME} ${SOURCES})
+target_link_libraries(${PROJECT_NAME} game audio goddard pc menu ${LINK_LIBRARIES})
