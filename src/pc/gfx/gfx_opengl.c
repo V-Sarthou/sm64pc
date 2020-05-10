@@ -9,7 +9,7 @@
 #endif
 #include <PR/gbi.h>
 
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(WIN32)
 #define FOR_WINDOWS 1
 #else
 #define FOR_WINDOWS 0
