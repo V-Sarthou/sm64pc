@@ -3135,6 +3135,14 @@ typedef union {
 		 _SHIFTL((mA1), 18, 3) | _SHIFTL((aRGB1), 6, 3) |	\
 		 _SHIFTL((sbA1), 3, 3) | _SHIFTL((aA1), 0, 3))
 
+
+#ifdef WIN32
+#define EXPAND_ARGS(...) __VA_ARGS__
+#define gDPSetCombineMode(...) EXPAND_ARGS(gDPSetCombineLERP EXPAND_ARGS((__VA_ARGS__)))
+#define gsDPSetCombineMode(...) EXPAND_ARGS(gsDPSetCombineLERP EXPAND_ARGS((__VA_ARGS__)))
+#endif
+
+
 #define	gDPSetCombineLERP(pkt, a0, b0, c0, d0, Aa0, Ab0, Ac0, Ad0,	\
 		a1, b1, c1, d1,	Aa1, Ab1, Ac1, Ad1)			\
 {									\
@@ -3171,6 +3179,7 @@ typedef union {
 			       G_ACMUX_##Ab1, G_ACMUX_##Ad1))		\
 }}
 
+#ifndef WIN32
 /*
  * SetCombineMode macros are NOT redunant. It allow the C preprocessor
  * to substitute single parameter which includes commas in the token and
@@ -3183,6 +3192,7 @@ typedef union {
 
 #define gDPSetCombineMode(pkt, a, b)	gDPSetCombineLERP(pkt, a, b)
 #define	gsDPSetCombineMode(a, b)	gsDPSetCombineLERP(a, b)
+#endif
 
 #define	gDPSetColor(pkt, c, d)						\
 {									\
