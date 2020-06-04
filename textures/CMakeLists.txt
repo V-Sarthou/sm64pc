@@ -3,14 +3,14 @@ cmake_minimum_required(VERSION 3.12)
 project(textures)
 
 add_custom_target(extract_assets
-        COMMAND python ${CMAKE_SOURCE_DIR}/extract_assets.py ${ROM_VERSION}
+        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/extract_assets.py ${ROM_VERSION}
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         DEPENDS skyconv n64graphics mio0 aifc_decode
         COMMENT "Extracting assets from: baserom.${ROM_VERSION}.z64"
 )
 
 add_custom_target(clean_textures
-        COMMAND python ${CMAKE_SOURCE_DIR}/extract_assets.py --clean
+        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/extract_assets.py --clean
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "Cleaning textures.."
 )

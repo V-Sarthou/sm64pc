@@ -156,10 +156,11 @@ static inline s32 write_eeprom_savefile(const u32 file, const u32 slot, const u3
     return write_eeprom_data(&gSaveBuffer.files[file][slot], num * sizeof(struct SaveFile), ofs);
 #else
     // byteswap the data and then write it
-    struct SaveFile sf[num];
-    bcopy(&gSaveBuffer.files[file][slot], sf, num * sizeof(sf[0]));
+    const size_t sf_size = num * sizeof(struct SaveFile);
+    struct SaveFile sf[2];
+    bcopy(&gSaveBuffer.files[file][slot], sf, sf_size);
     for (u32 i = 0; i < num; ++i) bswap_savefile(&sf[i]);
-    return write_eeprom_data(&sf, sizeof(sf), ofs);
+    return write_eeprom_data(&sf, sf_size, ofs);
 #endif
 }
 
@@ -171,10 +172,11 @@ static inline s32 write_eeprom_menudata(const u32 slot, const u32 num) {
     return write_eeprom_data(&gSaveBuffer.menuData[slot], num * sizeof(struct MainMenuSaveData), ofs);
 #else
     // byteswap the data and then write it
-    struct MainMenuSaveData md[num];
-    bcopy(&gSaveBuffer.menuData[slot], md, num * sizeof(md[0]));
+    const size_t md_size = num * sizeof(struct MainMenuSaveData);
+    struct MainMenuSaveData md[2];
+    bcopy(&gSaveBuffer.menuData[slot], md, md_size);
     for (u32 i = 0; i < num; ++i) bswap_menudata(&md[i]);
-    return write_eeprom_data(&md, sizeof(md), ofs);
+    return write_eeprom_data(&md, md_size, ofs);
 #endif
 }
 

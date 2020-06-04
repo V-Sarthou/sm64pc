@@ -3,7 +3,7 @@
 #include "cheats.h"
 #include "pc_main.h"
 
-#include <strings.h>
+#include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

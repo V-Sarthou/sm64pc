@@ -5,7 +5,7 @@
 #include <string.h>
 #include <assert.h>
 #include <ctype.h>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include "configfile.h"
 #include "gfx/gfx_screen_config.h"

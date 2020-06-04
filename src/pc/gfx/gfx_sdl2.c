@@ -1,23 +1,30 @@
-#ifdef __MINGW32__
+#if defined(__MINGW32__) || defined(WIN32)
 #define FOR_WINDOWS 1
 #else
 #define FOR_WINDOWS 0
 #endif
 
-#if FOR_WINDOWS
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <SDL2/SDL.h>
-#define GL_GLEXT_PROTOTYPES 1
-#include <SDL2/SDL_opengl.h>
-#else
-#include <SDL2/SDL.h>
-#define GL_GLEXT_PROTOTYPES 1
+#ifdef SM64_USE_GLAD
+#include <glad/glad.h>
+#include <stdio.h>
+#endif
 
-#ifdef OSX_BUILD
-#include <SDL2/SDL_opengl.h>
+#if FOR_WINDOWS
+# define GLEW_STATIC
+# include <SDL.h>
+# if !defined(SM64_USE_GLAD)
+#   define GL_GLEXT_PROTOTYPES 1
+#   include <SDL_opengl.h>
+# endif
 #else
-#include <SDL2/SDL_opengles2.h>
+# include <SDL.h>
+# if !defined(SM64_USE_GLAD)
+#   define GL_GLEXT_PROTOTYPES 1
+#   ifdef OSX_BUILD
+#     include <SDL2/SDL_opengl.h>
+#   else
+#     include <SDL2/SDL_opengles2.h>
+#   endif
 #endif
 
 #endif // End of OS-Specific GL defines
@@ -173,6 +180,12 @@ static void gfx_sdl_init(void) {
     SDL_GL_SetSwapInterval(configWindow.vsync);
 
     gfx_sdl_set_fullscreen();
+
+#   ifdef SM64_USE_GLAD
+    // Load GL extensions using glad
+    if ( !gladLoadGLES2Loader( (GLADloadproc) SDL_GL_GetProcAddress ) )
+      fprintf(stderr, "Failed to initialize the OpenGL context.\n");
+#   endif
 
     for (size_t i = 0; i < sizeof(windows_scancode_table) / sizeof(SDL_Scancode); i++) {
         inverted_scancode_table[windows_scancode_table[i]] = i;

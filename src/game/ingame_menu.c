@@ -1801,17 +1801,17 @@ void render_dialog_entries(void) {
 
                   0,
                   ensure_nonnegative(DIAG_VAL2 - dialog->width),
-#ifdef VERSION_EU
-
-                  SCREEN_WIDTH,
-
-                  ensure_nonnegative((240 - dialog->width) + ((dialog->linesPerBox * 80) / DIAG_VAL4) / gDialogBoxScale));
-#else
+//#ifdef VERSION_EU
+//
+//                  SCREEN_WIDTH,
+//
+//                  ensure_nonnegative((240 - dialog->width) + ((dialog->linesPerBox * 80) / DIAG_VAL4) / gDialogBoxScale));
+//#else
 
                   SCREEN_WIDTH,
 
                   ensure_nonnegative(240 + ((dialog->linesPerBox * 80) / DIAG_VAL4) - dialog->width));
-#endif
+//#endif
 #if defined(VERSION_JP) || defined(VERSION_SH)
     handle_dialog_text_and_pages(0, dialog);
 #else
