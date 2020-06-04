@@ -7,6 +7,9 @@ set(ROM_VERSION "us" CACHE STRING "Rom version")
 set_property(CACHE ROM_VERSION PROPERTY STRINGS us eu jp sh)
 option(ROM_VERSION "Rom version")
 
+find_package(Python REQUIRED)
+set(PYTHON_EXECUTABLE ${Python_EXECUTABLE})
+
 add_subdirectory(tools)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -17,25 +20,27 @@ if(NOT EXISTS ${CMAKE_SOURCE_DIR}/baserom.${ROM_VERSION}.z64)
   message(FATAL_ERROR "Please provide ${CMAKE_SOURCE_DIR}/baserom.${ROM_VERSION}.z64")
 endif()
 
-set(SM_VERSION_CFLAGS "-DVERSION_US -DNON_MATCHING -DAVOID_UB")
+set(SM_VERSION_CFLAGS -D VERSION_US -D NON_MATCHING -D AVOID_UB)
 add_definitions(${SM_VERSION_CFLAGS})
 
-set(HEXDUMP_PATH "hexdump" CACHE FILEPATH "")
+set(HEXDUMP_PATH "hexdump" CACHE FILEPATH "Path to hexdump executable")
 
 IF (WIN32)
-    option(HEXDUMP_PATH "Path to hexdump executable")
     if(NOT EXISTS ${HEXDUMP_PATH})
       message(FATAL_ERROR "Please provide the path to hexdump executable.")
     endif()
 
-    #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
-    set(LINK_LIBRARIES setupapi dinput8 user32 gdi32 imm32 ole32 oleaut32 shell32 winmm version uuid)
-
-    set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
     set(BUILD_SHARED_LIBS OFF)
-    #set(CMAKE_EXE_LINKER_FLAGS "-static")
+    set(CompilerFlags
+        CMAKE_C_FLAGS
+        CMAKE_C_FLAGS_DEBUG
+        CMAKE_C_FLAGS_RELEASE
+        )
+    foreach(CompilerFlag ${CompilerFlags})
+      string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+    endforeach()
 ELSE ()
-    set(LINK_LIBRARIES SDL2main SDL2 GL m)
+    set(LINK_LIBRARIES GL m)
 ENDIF ()
 
 

@@ -9,27 +9,28 @@
 #endif
 #include <PR/gbi.h>
 
-#if defined(__MINGW32__) || defined(WIN32)
-#define FOR_WINDOWS 1
+#ifdef SM64_USE_GLAD
+# include <glad/glad.h>
 #else
-#define FOR_WINDOWS 0
-#endif
+# if defined(__MINGW32__) || defined(WIN32)
+#   define FOR_WINDOWS 1
+# else
+#   define FOR_WINDOWS 0
+# endif
 
-#if FOR_WINDOWS
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <SDL2/SDL.h>
-#define GL_GLEXT_PROTOTYPES 1
-#include <SDL2/SDL_opengl.h>
+# if FOR_WINDOWS
+#   define GLEW_STATIC
+#   include <GL/glew.h>
+#   define GL_GLEXT_PROTOTYPES 1
 
-#else
-#include <SDL2/SDL.h>
-#define GL_GLEXT_PROTOTYPES 1
+# else
+#   define GL_GLEXT_PROTOTYPES 1
 
 #ifdef OSX_BUILD
 #include <SDL2/SDL_opengl.h>
 #else
-#include <SDL2/SDL_opengles2.h>
+#   include <SDL2/SDL_opengles2.h>
+# endif
 #endif
 
 #endif

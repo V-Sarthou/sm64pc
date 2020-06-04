@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.12)
 
 project(audio)
 
-file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/sound/sound_banks)
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/sound/samples)
 
 file(GLOB SOUND_SAMPLE_AIFFS "${CMAKE_SOURCE_DIR}/sound/samples/*/*.aiff")
@@ -21,8 +20,6 @@ foreach(SOUND_SAMPLE_AIFF ${SOUND_SAMPLE_AIFFS})
     DEPENDS ${SOUND_SAMPLE_AIFF}
   )
 endforeach()
-
-file(GLOB SOUND_BANK_FILES "${CMAKE_SOURCE_DIR}/sound/sound_banks/*.json")
 
 set(SOUND_SEQUENCE_FILES "")
 file(GLOB SOUND_SEQUENCE_FILES_ASM "${CMAKE_SOURCE_DIR}/sound/sequences/*.s" "${CMAKE_SOURCE_DIR}/sound/sequences/${ROM_VERSION}/*.s")
@@ -43,11 +40,13 @@ endforeach()
 file(GLOB SOUND_SEQUENCE_FILES_M64 "${CMAKE_SOURCE_DIR}/sound/sequences/*.m64" "${CMAKE_SOURCE_DIR}/sound/sequences/${ROM_VERSION}/*.m64")
 list(APPEND SOUND_SEQUENCE_FILES ${SOUND_SEQUENCE_FILES_M64})
 
+file(GLOB SOUND_BANK_FILES "${CMAKE_SOURCE_DIR}/sound/sound_banks/*.json")
+
 add_custom_command(
   OUTPUT
     ${CMAKE_BINARY_DIR}/sound/sound_data.ctl
     ${CMAKE_BINARY_DIR}/sound/sound_data.tbl
-	COMMAND python ${CMAKE_SOURCE_DIR}/tools/assemble_sound.py ${CMAKE_BINARY_DIR}/sound/samples/ ${CMAKE_SOURCE_DIR}/sound/sound_banks/ ${CMAKE_BINARY_DIR}/sound/sound_data.ctl ${CMAKE_BINARY_DIR}/sound/sound_data.tbl ${SM_VERSION_CFLAGS} --endian little --bitwidth 64
+	COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/assemble_sound.py ${CMAKE_BINARY_DIR}/sound/samples/ ${CMAKE_SOURCE_DIR}/sound/sound_banks/ ${CMAKE_BINARY_DIR}/sound/sound_data.ctl ${CMAKE_BINARY_DIR}/sound/sound_data.tbl ${SM_VERSION_CFLAGS} --endian little --bitwidth 64
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   DEPENDS ${SOUND_BANK_FILES} ${SOUND_SAMPLE_AIFCS}
   COMMENT "Generating sound_data.ctl and sound_data.tbl"
@@ -57,7 +56,7 @@ add_custom_command(
   OUTPUT
     ${CMAKE_BINARY_DIR}/sound/bank_sets
     ${CMAKE_BINARY_DIR}/sound/sequences.bin
-	COMMAND python ${CMAKE_SOURCE_DIR}/tools/assemble_sound.py --sequences ${CMAKE_BINARY_DIR}/sound/sequences.bin ${CMAKE_BINARY_DIR}/sound/bank_sets ${CMAKE_SOURCE_DIR}/sound/sound_banks/ ${CMAKE_SOURCE_DIR}/sound/sequences.json ${SOUND_SEQUENCE_FILES} ${SM_VERSION_CFLAGS} --endian little --bitwidth 64
+	COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/assemble_sound.py --sequences ${CMAKE_BINARY_DIR}/sound/sequences.bin ${CMAKE_BINARY_DIR}/sound/bank_sets ${CMAKE_SOURCE_DIR}/sound/sound_banks/ ${CMAKE_SOURCE_DIR}/sound/sequences.json ${SOUND_SEQUENCE_FILES} ${SM_VERSION_CFLAGS} --endian little --bitwidth 64
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   DEPENDS ${SOUND_BANK_FILES} ${CMAKE_SOURCE_DIR}/sound/sequences.json ${SOUND_SEQUENCE_FILES}
   COMMENT "Generating bank_sets and sequences.bin"
@@ -65,7 +64,7 @@ add_custom_command(
 
 add_custom_command(
   OUTPUT ${CMAKE_BINARY_DIR}/sound/sound_data.ctl.c
-  COMMAND python ${CMAKE_SOURCE_DIR}/tools/binary_to_c_array.py ${CMAKE_BINARY_DIR}/sound/sound_data.ctl gSoundDataADSR
+  COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/binary_to_c_array.py ${CMAKE_BINARY_DIR}/sound/sound_data.ctl gSoundDataADSR
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   DEPENDS ${CMAKE_BINARY_DIR}/sound/sound_data.ctl
   COMMENT "Creating sound_data.ctl.c from sound_data.ctl"
@@ -73,7 +72,7 @@ add_custom_command(
 
 add_custom_command(
   OUTPUT ${CMAKE_BINARY_DIR}/sound/sound_data.tbl.c
-  COMMAND python ${CMAKE_SOURCE_DIR}/tools/binary_to_c_array.py ${CMAKE_BINARY_DIR}/sound/sound_data.tbl gSoundDataRaw
+  COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/binary_to_c_array.py ${CMAKE_BINARY_DIR}/sound/sound_data.tbl gSoundDataRaw
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   DEPENDS ${CMAKE_BINARY_DIR}/sound/sound_data.tbl
   COMMENT "Creating sound_data.tbl.c from sound_data.tbl"
@@ -81,7 +80,7 @@ add_custom_command(
 
 add_custom_command(
   OUTPUT ${CMAKE_BINARY_DIR}/sound/sequences.bin.c
-  COMMAND python ${CMAKE_SOURCE_DIR}/tools/binary_to_c_array.py ${CMAKE_BINARY_DIR}/sound/sequences.bin gMusicData
+  COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/binary_to_c_array.py ${CMAKE_BINARY_DIR}/sound/sequences.bin gMusicData
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   DEPENDS ${CMAKE_BINARY_DIR}/sound/sequences.bin
   COMMENT "Creating sequences.bin.c from sequences.bin"
@@ -89,7 +88,7 @@ add_custom_command(
 
 add_custom_command(
   OUTPUT ${CMAKE_BINARY_DIR}/sound/bank_sets.c
-  COMMAND python ${CMAKE_SOURCE_DIR}/tools/binary_to_c_array.py ${CMAKE_BINARY_DIR}/sound/bank_sets gBankSetsData
+  COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/binary_to_c_array.py ${CMAKE_BINARY_DIR}/sound/bank_sets gBankSetsData
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   DEPENDS ${CMAKE_BINARY_DIR}/sound/bank_sets
   COMMENT "Creating bank_sets.c from bank_sets"

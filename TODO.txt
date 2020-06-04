@@ -1,0 +1,5 @@
+- rebase on last master
+- replace **hexdump**, **objcopy**, **cc** and **as** by python scripts or c tools
+- create new target convert_assets_to_c that:
+  - depends on extract_assets
+  - convert all textures and audio files to c files (no more foreach(...) add_custom_command(...))

@@ -24,7 +24,8 @@ file(GLOB_RECURSE HEADERS "*.h")
 set(LEVELS_HEADER_FILE ${CMAKE_BINARY_DIR}/include/level_headers.h)
 add_custom_command(
   OUTPUT ${LEVELS_HEADER_FILE}
-  COMMAND cpp -I ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/levels/level_headers.h.in | python ${CMAKE_SOURCE_DIR}/tools/output_level_headers.py > ${LEVELS_HEADER_FILE}
+  COMMAND cpp -I ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/levels/level_headers.h.in > ${CMAKE_BINARY_DIR}/include/level_headers.h.out
+  COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/output_level_headers.py ${CMAKE_BINARY_DIR}/include/level_headers.h.out ${LEVELS_HEADER_FILE}
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   DEPENDS ${CMAKE_SOURCE_DIR}/levels/level_headers.h.in
   COMMENT "Generating levels header file"

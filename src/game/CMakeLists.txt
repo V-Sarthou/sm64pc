@@ -7,7 +7,7 @@ file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/assets)
 file(GLOB MARIO_ANIM_DEPS "${CMAKE_SOURCE_DIR}/assets/anims/*.inc.c")
 add_custom_command(
   OUTPUT ${CMAKE_BINARY_DIR}/assets/mario_anim_data.c
-	COMMAND python ${CMAKE_SOURCE_DIR}/tools/mario_anims_converter.py > ${CMAKE_BINARY_DIR}/assets/mario_anim_data.c
+	COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/mario_anims_converter.py > ${CMAKE_BINARY_DIR}/assets/mario_anim_data.c
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   DEPENDS ${MARIO_ANIM_DEPS}
   COMMENT "Extracting mario anims from: assets/anims"
@@ -17,7 +17,7 @@ file(GLOB DEMO_DATA_DEPS "${CMAKE_SOURCE_DIR}/assets/demos/*.bin")
 list(APPEND DEMO_DATA_DEPS ${CMAKE_SOURCE_DIR}/assets/demo_data.json)
 add_custom_command(
   OUTPUT ${CMAKE_BINARY_DIR}/assets/demo_data.c
-	COMMAND python ${CMAKE_SOURCE_DIR}/tools/demo_data_converter.py ${CMAKE_SOURCE_DIR}/assets/demo_data.json ${SM_VERSION_CFLAGS} > ${CMAKE_BINARY_DIR}/assets/demo_data.c
+	COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/demo_data_converter.py ${CMAKE_SOURCE_DIR}/assets/demo_data.json ${SM_VERSION_CFLAGS} > ${CMAKE_BINARY_DIR}/assets/demo_data.c
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   DEPENDS ${DEMO_DATA_DEPS}
   COMMENT "Extracting demo data from: assets/demos"

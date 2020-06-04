@@ -7,7 +7,7 @@
 #include <ctype.h>
 
 #if USE_SDL == 2
-# include <SDL2/SDL.h>
+# include <SDL.h>
 # define WINDOWPOS_CENTERED SDL_WINDOWPOS_CENTERED
 #else
 # define WINDOWPOS_CENTERED 0

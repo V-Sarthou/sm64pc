@@ -4,7 +4,7 @@
 #include "pc_main.h"
 #include "platform.h"
 
-#include <strings.h>
+#include <string.h>
 #include <stdlib.h>
 #define __NO_MINGW_LFS //Mysterious error in MinGW.org stdio.h
 #include <stdio.h>
