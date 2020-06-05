@@ -22,6 +22,7 @@ endif()
 
 set(SM_VERSION_CFLAGS -D VERSION_US -D NON_MATCHING -D AVOID_UB)
 add_definitions(${SM_VERSION_CFLAGS})
+add_definitions(-D F3DEX_GBI_2E)
 
 set(HEXDUMP_PATH "hexdump" CACHE FILEPATH "Path to hexdump executable")
 
