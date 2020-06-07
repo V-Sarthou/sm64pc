@@ -7,7 +7,12 @@
 
 /* Platform-specific functions and whatnot */
 
+#if defined(_MSC_VER)
+#include <windows.h>
+#define SYS_MAX_PATH MAX_PATH
+#else
 #define SYS_MAX_PATH 1024 // FIXME: define this on different platforms
+#endif
 
 // NULL terminated list of platform specific read-only data paths
 extern const char *sys_ropaths[];
@@ -24,6 +29,13 @@ const char *sys_file_extension(const char *fpath);
 const char *sys_file_name(const char *fpath);
 
 // shows an error message in some way and terminates the game
-void sys_fatal(const char *fmt, ...) __attribute__ ((noreturn));
+#if defined(_MSC_VER)
+__declspec(noreturn)
+#endif
+void sys_fatal(const char *fmt, ...)
+#if !defined(_MSC_VER)
+__attribute__( (noreturn) )
+#endif
+;
 
 #endif // _SM64_PLATFORM_H_

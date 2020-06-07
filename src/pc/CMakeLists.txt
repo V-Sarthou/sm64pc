@@ -13,7 +13,9 @@ set(SOURCES
   cheats.c
   cliopts.c
   configfile.c
+  ini.c
   mixer.c
+  platform.c
   ultra_reimplementation.c
 
   audio/audio_null.c
@@ -25,7 +27,13 @@ set(SOURCES
   controller/controller_recorded_tas.c
   controller/controller_sdl.c
 
+  fs/dirtree.c
+  fs/fs.c
+  fs/fs_packtype_dir.c
+  fs/fs_packtype_zip.c
+
   gfx/gfx_opengl.c
+  gfx/gfx_opengl_legacy.c
   gfx/gfx_pc.c
   gfx/gfx_sdl2.c
 )
@@ -34,7 +42,9 @@ set(HEADERS
   cheats.h
   cliopts.h
   configfile.h
+  ini.h
   mixer.h
+  platform.h
 
   audio/audio_api.h
   audio/audio_null.h
@@ -45,6 +55,9 @@ set(HEADERS
   controller/controller_keyboard.h
   controller/controller_recorded_tas.h
   controller/controller_sdl.h
+
+  fs/dirtree.h
+  fs/fs.h
 
   gfx/gfx_cc.h
   gfx/gfx_opengl.h
@@ -75,7 +88,13 @@ if(NOT GLEW_FOUND)
   if(NOT glad_POPULATED)
     FetchContent_Populate(glad)
   endif()
-  set(GLAD_API "gles2=2.0" CACHE STRING "" FORCE)
+
+  if(${SM64_LEGACY_GL})
+    set(GLAD_API "gl=1.3" CACHE STRING "" FORCE)
+  else()
+    set(GLAD_API "gles2=2.0" CACHE STRING "" FORCE)
+  endif()
+
   set(USE_MSVC_RUNTIME_LIBRARY_DLL OFF CACHE BOOL "" FORCE)
   add_subdirectory(${glad_SOURCE_DIR} ${glad_BINARY_DIR})
   list(APPEND PC_LINK_LIBRARIES glad)

@@ -67,7 +67,14 @@ const char *sys_file_name(const char *fpath) {
 
 /* this calls a platform-specific impl function after forming the error message */
 
-static void sys_fatal_impl(const char *msg) __attribute__ ((noreturn));
+#if defined(_MSC_VER)
+__declspec(noreturn)
+#endif
+static void sys_fatal_impl(const char *msg)
+#if !defined(_MSC_VER)
+__attribute__( (noreturn) )
+#endif
+;
 
 void sys_fatal(const char *fmt, ...) {
     static char msg[2048];
@@ -82,7 +89,7 @@ void sys_fatal(const char *fmt, ...) {
 #if USE_SDL
 
 // we can just ask SDL for most of this shit if we have it
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 const char *sys_user_path(void) {
     static char path[SYS_MAX_PATH] = { 0 };

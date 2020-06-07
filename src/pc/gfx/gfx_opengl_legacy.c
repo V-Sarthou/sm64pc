@@ -9,21 +9,25 @@
 #endif
 #include <PR/gbi.h>
 
-#ifdef __MINGW32__
+#if defined( __MINGW32__ ) || defined( WIN32 )
 #define FOR_WINDOWS 1
 #else
 #define FOR_WINDOWS 0
 #endif
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
-#if FOR_WINDOWS || defined(OSX_BUILD)
-#define GLEW_STATIC
-#include <GL/glew.h>
+#ifdef SM64_USE_GLAD
+# include <glad/glad.h>
+#else
+# if FOR_WINDOWS || defined(OSX_BUILD)
+#   define GLEW_STATIC
+#   include <GL/glew.h>
+# endif
+
+# define GL_GLEXT_PROTOTYPES 1
+# include <SDL_opengl.h>
 #endif
-
-#define GL_GLEXT_PROTOTYPES 1
-#include <SDL2/SDL_opengl.h>
 
 // redefine this if using a different GL loader
 #define mglGetProcAddress(name) SDL_GL_GetProcAddress(name)

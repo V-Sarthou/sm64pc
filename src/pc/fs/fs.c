@@ -2,11 +2,13 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#if !defined(_MSC_VER)
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
 #include <ctype.h>
+#endif
 #ifdef _WIN32
 #include <direct.h>
 #endif
@@ -379,17 +381,87 @@ const char *fs_convert_path(char *buf, const size_t bufsiz, const char *path)  {
 /* these operate on the real file system */
 
 bool fs_sys_file_exists(const char *name) {
+#if defined(_MSC_VER)
+    const DWORD dwAttrib = GetFileAttributes(name);
+    return (dwAttrib != INVALID_FILE_ATTRIBUTES) && !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY);
+#else
     struct stat st;
     return (stat(name, &st) == 0 && S_ISREG(st.st_mode));
+#endif
 }
 
 bool fs_sys_dir_exists(const char *name) {
+#if defined(_MSC_VER)
+    const DWORD dwAttrib = GetFileAttributes(name);
+    return (dwAttrib != INVALID_FILE_ATTRIBUTES) && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY);
+#else
     struct stat st;
     return (stat(name, &st) == 0 && S_ISDIR(st.st_mode));
+#endif
 }
 
 bool fs_sys_walk(const char *base, walk_fn_t walk, void *user, const bool recur) {
     char fullpath[SYS_MAX_PATH];
+    bool ret = true;
+#if defined(_MSC_VER)
+    size_t path_len = strlen( base );
+    strncpy( fullpath, base, path_len + 1 );
+
+    if ( fullpath[path_len - 1] == '\\' || fullpath[path_len - 1] == '/' )
+    {
+      fullpath[path_len - 1] = '\0';
+      path_len--;
+    }
+
+    fullpath[path_len - 1] = '\\'; path_len++;
+    fullpath[path_len - 1] = '*'; path_len++;
+
+    WIN32_FIND_DATA fdata;
+    HANDLE hFind = FindFirstFile( fullpath, &fdata );
+
+    if ( hFind == INVALID_HANDLE_VALUE )
+    {
+      fprintf( stderr, "sys_dir_walk(): could not open `%s`\n", base );
+      return false;
+    }
+
+    do
+    {
+      // skip ./.. and hidden files
+      if ( fdata.cFileName[0] == '\0' || fdata.cFileName[0] == '.' )
+        continue;
+
+      snprintf( fullpath, sizeof( fullpath ), "%s/%s", base, fdata.cFileName );
+
+      if ( fdata.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY )
+      {
+        if ( recur )
+        {
+          if ( !fs_sys_walk( fullpath, walk, user, recur ) )
+          {
+            ret = false;
+            break;
+          }
+        }
+      }
+      else
+      {
+        if ( !walk( user, fullpath ) )
+        {
+          ret = false;
+          break;
+        }
+      }
+    } while ( FindNextFile( hFind, &fdata ) != 0 );
+
+    if ( GetLastError() != ERROR_NO_MORE_FILES )
+    {
+      fprintf( stderr, "error with opening directory: %d\n", GetLastError() );
+      ret = false;
+    }
+
+    FindClose( hFind );
+#else
     DIR *dir;
     struct dirent *ent;
 
@@ -397,8 +469,6 @@ bool fs_sys_walk(const char *base, walk_fn_t walk, void *user, const bool recur)
         fprintf(stderr, "fs_dir_walk(): could not open `%s`\n", base);
         return false;
     }
-
-    bool ret = true;
 
     while ((ent = readdir(dir)) != NULL) {
         if (ent->d_name[0] == 0 || ent->d_name[0] == '.') continue; // skip ./.. and hidden files
@@ -419,6 +489,7 @@ bool fs_sys_walk(const char *base, walk_fn_t walk, void *user, const bool recur)
     }
 
     closedir(dir);
+#endif
     return ret;
 }
 

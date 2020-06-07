@@ -12,6 +12,12 @@
 #include "fs.h"
 #include "dirtree.h"
 
+#ifdef _MSC_VER
+#define PACK( __Declaration__ ) __pragma( pack(push, 1) ) __Declaration__ __pragma( pack(pop))
+#else
+#define PACK( __Declaration__ ) __Declaration__ __attribute__((__packed__))
+#endif
+
 #define ZIP_BUFSIZE 16384
 #define ZIP_EOCD_BUFSIZE 65578
 
@@ -80,7 +86,7 @@ static bool zip_parse_eocd(FILE *f, uint64_t *cdir_ofs, uint64_t *data_ofs, uint
     int64_t fsize = 0;
 
     // EOCD record struct
-    struct eocd_s {
+    PACK(struct eocd_s {
         uint32_t sig;
         uint16_t this_disk;
         uint16_t cdir_disk;
@@ -90,7 +96,7 @@ static bool zip_parse_eocd(FILE *f, uint64_t *cdir_ofs, uint64_t *data_ofs, uint
         uint32_t cdir_ofs;
         uint16_t comment_len;
         // zip comment follows
-    } __attribute__((__packed__));
+    });
     struct eocd_s eocd;
 
     // find the EOCD and seek to it
@@ -127,7 +133,7 @@ static bool zip_parse_eocd(FILE *f, uint64_t *cdir_ofs, uint64_t *data_ofs, uint
 
 static bool zip_fixup_offset(zip_file_t *zipfile) {
     // LFH record struct
-    struct lfh_s {
+    PACK(struct lfh_s {
         uint32_t sig;
         uint16_t version_required;
         uint16_t bits;
@@ -140,7 +146,7 @@ static bool zip_fixup_offset(zip_file_t *zipfile) {
         uint16_t fname_len;
         uint16_t extra_len;
         // file name, extra field and data follow
-    } __attribute__((__packed__));
+    });
 
     struct lfh_s lfh;
 
@@ -162,7 +168,7 @@ static bool zip_fixup_offset(zip_file_t *zipfile) {
 
 static zip_entry_t *zip_load_entry(FILE *f, fs_dirtree_t *tree, const uint64_t data_ofs) {
     // CDH record struct
-    struct cdh_s {
+    PACK(struct cdh_s {
         uint32_t sig;
         uint16_t version_used;
         uint16_t version_required;
@@ -181,7 +187,7 @@ static zip_entry_t *zip_load_entry(FILE *f, fs_dirtree_t *tree, const uint64_t d
         uint32_t attr_ext;
         uint32_t lfh_ofs;
         // file name, extra field and comment follow
-    } __attribute__((__packed__));
+    });
 
     struct cdh_s cdh;
     zip_entry_t zipent;

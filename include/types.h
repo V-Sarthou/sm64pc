@@ -7,6 +7,9 @@
 #include <ultra64.h>
 #include "macros.h"
 
+#if defined(_MSC_VER)
+typedef size_t ssize_t;
+#endif
 
 // Certain functions are marked as having return values, but do not
 // actually return a value. This causes undefined behavior, which we'd rather
